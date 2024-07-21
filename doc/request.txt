@@ -1,0 +1,29 @@
+========================================================================================
+                                                                   *request.nvim*
+
+Request.nvim is a plugin to make http requests from the comfort of your
+favorite text editor.
+
+                                                            *request.get()*
+request.get({url})
+
+  Makes an http GET request to the provided URL.
+
+>
+    request.get('https://jsonplaceholder.typicode.com/posts/1')
+<
+                                                            *request.post()*
+request.post({url}, {params})
+
+  Makes an http POST request to the provided URL with the provided params.
+
+>
+    local params = {
+      title = 'foo',
+      body = 'bar',
+      userId = 1
+    }
+    request.post('https://jsonplaceholder.typicode.com/posts', params)
+<
+
+ vim:tw=78:ts=8:ft=help:norl:

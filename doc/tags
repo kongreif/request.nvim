@@ -1,0 +1,3 @@
+request.get()	request.txt	/*request.get()*
+request.nvim	request.txt	/*request.nvim*
+request.post()	request.txt	/*request.post()*
