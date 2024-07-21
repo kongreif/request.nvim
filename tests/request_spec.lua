@@ -13,4 +13,20 @@ describe("request", function()
     local response = require("request").get('https://jsonplaceholder.typicode.com/posts/1')
     assert.equals(expected_response, response)
   end)
+
+  it("can make a post request", function()
+    local expected_response = [[{
+  "userId": "1",
+  "title": "foo",
+  "body": "bar",
+  "id": 101
+}]]
+    local params = {
+      title = 'foo',
+      body = 'bar',
+      userId = 1
+    }
+    local response = require("request").post('https://jsonplaceholder.typicode.com/posts', params)
+    assert.equals(expected_response, response)
+  end)
 end)
