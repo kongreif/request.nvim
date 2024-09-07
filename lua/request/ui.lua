@@ -1,5 +1,6 @@
 local M = {}
 
+local remaps = require('request.remaps')
 local commands = require('request.commands')
 
 M.toggle_request_method = function()
@@ -75,11 +76,7 @@ M.open_request_view = function()
   vim.api.nvim_buf_set_lines(M.buffer, 4, -1, false, { "" })
   vim.api.nvim_buf_set_lines(M.buffer, 5, -1, false, { "Response:" })
 
-  vim.api.nvim_buf_set_keymap(M.buffer, 'n', 'M', ':lua require("request.ui").toggle_request_method()<CR>', {noremap = true, silent = true})
-  vim.api.nvim_buf_set_keymap(M.buffer, 'n', 'Q', ":close<CR>", {noremap = true, silent = true})
-  vim.api.nvim_buf_set_keymap(M.buffer, 'n', 'U', string.format(":lua require('request.ui').activate_url_insert(%d, %s, %s)<CR>", M.buffer, input_fields.url.row, input_fields.url.start_col), {noremap = true, silent = true})
-  vim.api.nvim_buf_set_keymap(M.buffer, 'n', '<CR>', ':lua require("request.ui").handle_get_request()<CR>', {noremap = true, silent = false})
-  vim.api.nvim_buf_set_keymap(M.buffer, 'n', 'X', ':lua require("request.ui").reset()<CR>', {noremap = true, silent = true})
+  remaps.set_keymaps(M.buffer, input_fields)
 end
 
 return M
