@@ -9,7 +9,7 @@ M.toggle_request_method = function()
     M.request_method = "GET"
   end
 
-  vim.api.nvim_buf_set_lines(M.buffer, 0, 1, false, {"Request Method: " .. M.request_method .. " [M]"})
+  vim.api.nvim_buf_set_lines(M.buffer, 1, 2, false, {"Request Method: " .. M.request_method .. " [M]"})
 end
 
 M.activate_url_insert = function(buffer, row, start_col)
