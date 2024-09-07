@@ -22,7 +22,9 @@ Open the request.nvim window via `:Request`.
 Command keys are shown in `[ ]`, e.g. `[U]` to start inserting the request URL.  
 Hitting `Enter` will perform the request and show the response.
 
-So far only get requests can be done via the UI.
+The post params are expected in valid JSON.
+
+So far only get and post requests can be performed via the UI.
 
 ### Commands
 You can try out the [commands](https://github.com/kongreif/request.nvim/blob/main/lua/request/commands.lua) in Neovim's command mode like this:
