@@ -3,7 +3,16 @@ Why should you need to leave your favorite editor to make API requests?
 A neovim api request client written in Lua
 
 ## Documentation
-See `:help request.nvim`
+See also `:help request.nvim`.
+
+You can try out the [commands](https://github.com/kongreif/request.nvim/blob/main/lua/request/commands.lua) in Neovim's command mode like this:
+```lua
+:lua print(require("request").get("https://jsonplaceholder.typicode.com/posts/1"))
+
+:lua print(require("request").post("https://jsonplaceholder.typicode.com/posts", { userId = 1, title = 'foo', body = 'bar' }))
+```
+
+So far get and post are implemented.
 
 ## Contributing
 ### Cone the repo
