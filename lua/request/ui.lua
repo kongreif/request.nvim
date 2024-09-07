@@ -23,13 +23,19 @@ M.handle_get_request = function()
   local url = url_lines[1]
 
   local result = commands.get(url)
+  local print_result = {}
 
-  local lines = {}
-  for line in result:gmatch("[^\r\n]+") do
-    table.insert(lines, line)
+  if result == nil then
+    print_result = {"There was a problem with the request"}
+  elseif result == "" then
+    print_result = {"The response was empty"}
+  else
+    for line in result:gmatch("[^\r\n]+") do
+      table.insert(print_result, line)
+    end
   end
 
-  vim.api.nvim_buf_set_lines(M.buffer, 6, -1, false, lines)
+  vim.api.nvim_buf_set_lines(M.buffer, 6, -1, false, print_result)
 end
 
 M.reset = function()
