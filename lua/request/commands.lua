@@ -1,7 +1,7 @@
 local M = {}
 
 M.get = function(url)
-  local command = "curl " .. url
+  local command = "curl -s " .. url
   local handle = io.popen(command)
   local result = handle:read("*a")
   handle:close()
