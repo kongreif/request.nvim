@@ -7,6 +7,16 @@ A neovim api request client written in Lua
 ## Documentation
 See also `:help request.nvim`.
 
+### Setup
+If you're using [Lazy.nvim](https://github.com/folke/lazy.nvim)
+```lua
+{
+-- other plugins
+    "kongreif/request.nvim",
+-- other plugins
+}
+```
+
 ### UI
 Open the request.nvim window via `:Request`.
 Command keys are shown in `[ ]`, e.g. `[U]` to start inserting the request URL.
