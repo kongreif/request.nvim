@@ -2,6 +2,8 @@
 Why should you need to leave your favorite editor to make API requests?  
 A neovim api request client written in Lua
 
+![Screenshot](assets/20240907-screenshot.png)
+
 ## Documentation
 See also `:help request.nvim`.
 
