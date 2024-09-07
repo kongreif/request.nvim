@@ -18,8 +18,8 @@ If you're using [Lazy.nvim](https://github.com/folke/lazy.nvim)
 ```
 
 ### UI
-Open the request.nvim window via `:Request`.
-Command keys are shown in `[ ]`, e.g. `[U]` to start inserting the request URL.
+Open the request.nvim window via `:Request`.  
+Command keys are shown in `[ ]`, e.g. `[U]` to start inserting the request URL.  
 Hitting `Enter` will perform the request and show the response.
 
 So far only get requests can be done via the UI.
