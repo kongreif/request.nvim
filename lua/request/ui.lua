@@ -1,7 +1,6 @@
 local M = {}
 
 local remaps = require("request.remaps")
-local commands = require("request.commands")
 
 M.toggle_request_method = function()
 	if M.request_method == "GET" then
@@ -32,58 +31,6 @@ end
 M.activate_params_insert = function()
 	vim.api.nvim_win_set_cursor(0, { 1, 0 })
 	vim.cmd("startinsert")
-end
-
-M.handle_request = function()
-	if M.request_method == "GET" then
-		M.handle_get_request()
-	elseif M.request_method == "POST" then
-		M.handle_post_request()
-	end
-end
-
-M.handle_get_request = function()
-	local url_lines = vim.api.nvim_buf_get_lines(M.buffer_ui, 3, 4, false)
-	local url = url_lines[1]
-
-	local result = commands.get(url)
-	local print_result = {}
-
-	if result == nil then
-		print_result = { "There was a problem with the request" }
-	elseif result == "" then
-		print_result = { "The response was empty" }
-	else
-		for line in result:gmatch("[^\r\n]+") do
-			table.insert(print_result, line)
-		end
-	end
-
-	vim.api.nvim_buf_set_lines(M.buffer_ui, 6, -1, false, print_result)
-end
-
-M.handle_post_request = function()
-	local url_lines = vim.api.nvim_buf_get_lines(M.buffer_ui, 3, 4, false)
-	local url = url_lines[1]
-
-	local post_params_lines = vim.api.nvim_buf_get_lines(M.buffer_params, 0, -1, false)
-	local post_params_string = table.concat(post_params_lines, "\n")
-
-	local result = commands.post(url, post_params_string)
-
-	local print_result = {}
-
-	if result == nil then
-		print_result = { "There was a problem with the request" }
-	elseif result == "" then
-		print_result = { "The response was empty" }
-	else
-		for line in result:gmatch("[^\r\n]+") do
-			table.insert(print_result, line)
-		end
-	end
-
-	vim.api.nvim_buf_set_lines(M.buffer_ui, 6, -1, false, print_result)
 end
 
 M.reset = function()
