@@ -37,7 +37,7 @@ M.set_ui_keymaps = function(buffer, input_fields)
 	)
 end
 
-M.set_post_params_keymaps = function(buffer)
+M.set_params_keymaps = function(buffer)
 	vim.api.nvim_buf_set_keymap(
 		buffer,
 		"n",
@@ -50,7 +50,7 @@ M.set_post_params_keymaps = function(buffer)
 		buffer,
 		"n",
 		"P",
-		':lua require("request.ui").activate_post_params_insert()<CR>',
+		':lua require("request.ui").activate_params_insert()<CR>',
 		{ noremap = true, silent = true }
 	)
 	vim.api.nvim_buf_set_keymap(

@@ -6,10 +6,19 @@ local commands = require("request.commands")
 M.toggle_request_method = function()
 	if M.request_method == "GET" then
 		M.request_method = "POST"
-		M.open_post_window()
+		M.open_params_window()
+	elseif M.request_method == "POST" then
+		M.request_method = "PUT"
+	elseif M.request_method == "PUT" then
+		M.request_method = "PATCH"
+	elseif M.request_method == "PATCH" then
+		M.request_method = "DELETE"
+		M.hide_params_window()
+	elseif M.request_method == "DELETE" then
+		M.request_method = "GET"
 	else
 		M.request_method = "GET"
-		M.hide_post_window()
+		M.hide_params_window()
 	end
 
 	vim.api.nvim_buf_set_lines(M.buffer_ui, 1, 2, false, { "Request Method: " .. M.request_method .. " [M]" })
@@ -20,7 +29,7 @@ M.activate_url_insert = function(row, start_col)
 	vim.cmd("startinsert")
 end
 
-M.activate_post_params_insert = function()
+M.activate_params_insert = function()
 	vim.api.nvim_win_set_cursor(0, { 1, 0 })
 	vim.cmd("startinsert")
 end
@@ -57,7 +66,7 @@ M.handle_post_request = function()
 	local url_lines = vim.api.nvim_buf_get_lines(M.buffer_ui, 3, 4, false)
 	local url = url_lines[1]
 
-	local post_params_lines = vim.api.nvim_buf_get_lines(M.buffer_post_params, 0, -1, false)
+	local post_params_lines = vim.api.nvim_buf_get_lines(M.buffer_params, 0, -1, false)
 	local post_params_string = table.concat(post_params_lines, "\n")
 
 	local result = commands.post(url, post_params_string)
@@ -82,7 +91,7 @@ M.reset = function()
 	vim.api.nvim_buf_set_lines(M.buffer_ui, 6, -1, false, { "" })
 end
 
-M.open_post_window = function()
+M.open_params_window = function()
 	local width = vim.o.columns
 	local height = vim.o.lines
 
@@ -91,32 +100,32 @@ M.open_post_window = function()
 	local window_left_edge_row = math.floor((height - window_height) / 2)
 	local window_top_edge_col = math.floor(width / 2)
 
-	M.buffer_post_params = vim.api.nvim_create_buf(false, true)
-	vim.bo[M.buffer_post_params].bufhidden = "wipe"
+	M.buffer_params = vim.api.nvim_create_buf(false, true)
+	vim.bo[M.buffer_params].bufhidden = "wipe"
 
-	M.window_post_params = vim.api.nvim_open_win(M.buffer_post_params, true, {
+	M.window_params = vim.api.nvim_open_win(M.buffer_params, true, {
 		relative = "editor",
 		width = window_width,
 		height = window_height,
 		row = window_left_edge_row,
 		col = window_top_edge_col,
 		border = "single",
-		title = "Set post params [P]",
+		title = "Set params [P]",
 	})
 
-	vim.wo[M.window_post_params].number = false
-	vim.wo[M.window_post_params].relativenumber = false
-	vim.wo[M.window_post_params].signcolumn = "no"
-	vim.wo[M.window_post_params].fillchars = "eob: "
+	vim.wo[M.window_params].number = false
+	vim.wo[M.window_params].relativenumber = false
+	vim.wo[M.window_params].signcolumn = "no"
+	vim.wo[M.window_params].fillchars = "eob: "
 
-	vim.api.nvim_buf_set_lines(M.buffer_post_params, 0, -1, false, { "" })
+	vim.api.nvim_buf_set_lines(M.buffer_params, 0, -1, false, { "" })
 
-	remaps.set_post_params_keymaps(M.buffer_post_params)
+	remaps.set_params_keymaps(M.buffer_params)
 end
 
-M.hide_post_window = function()
-	if M.window_post_params then
-		vim.api.nvim_win_close(M.window_post_params, false)
+M.hide_params_window = function()
+	if M.window_params then
+		vim.api.nvim_win_close(M.window_params, false)
 	end
 end
 
