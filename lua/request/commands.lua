@@ -2,13 +2,7 @@ local M = {}
 
 M.get = function(url)
 	local command = "curl -s " .. url
-	local handle = io.popen(command)
-	if handle == nil then
-		error("Nil response for command: " .. command)
-	end
-	local result = handle:read("*a")
-	handle:close()
-	return result
+	return M._handle_response(command)
 end
 
 M.post = function(url, params)
@@ -28,6 +22,15 @@ M.post = function(url, params)
 
 	local command = "curl -s -X POST -H 'Content-Type: application/json' --data '" .. curl_params .. "' " .. url
 
+	return M._handle_response(command)
+end
+
+M.delete = function(url)
+	local command = "curl -s -X DELETE " .. url
+	return M._handle_response(command)
+end
+
+M._handle_response = function(command)
 	local handle = io.popen(command)
 	if handle == nil then
 		error("Nil response for command: " .. command)
