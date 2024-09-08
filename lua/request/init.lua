@@ -12,5 +12,7 @@ vim.api.nvim_create_user_command("Request", ui.open_request_view, {})
 M.get = commands.get
 M.post = commands.post
 M.delete = commands.delete
+M.put = commands.put
+M.patch = commands.patch
 
 return M

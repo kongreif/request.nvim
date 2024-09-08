@@ -6,21 +6,25 @@ M.get = function(url)
 end
 
 M.post = function(url, params)
-	local curl_params = ""
-
-	if type(params) == "string" then
-		curl_params = params
-	elseif type(params) == "table" then
-		local param_pairs = {}
-		for key, value in pairs(params) do
-			table.insert(param_pairs, string.format('"%s": "%s"', key, tostring(value)))
-		end
-		curl_params = "{" .. table.concat(param_pairs, ", ") .. "}"
-	else
-		error("Invalid params: expected a table or a JSON string")
-	end
+	local curl_params = M._handle_params(params)
 
 	local command = "curl -s -X POST -H 'Content-Type: application/json' --data '" .. curl_params .. "' " .. url
+
+	return M._handle_response(command)
+end
+
+M.put = function(url, params)
+	local curl_params = M._handle_params(params)
+
+	local command = "curl -s -X PUT -H 'Content-Type: application/json' --data '" .. curl_params .. "' " .. url
+
+	return M._handle_response(command)
+end
+
+M.patch = function(url, params)
+	local curl_params = M._handle_params(params)
+
+	local command = "curl -s -X PATCH -H 'Content-Type: application/json' --data '" .. curl_params .. "' " .. url
 
 	return M._handle_response(command)
 end
@@ -39,6 +43,20 @@ M._handle_response = function(command)
 	handle:close()
 
 	return result
+end
+
+M._handle_params = function(params)
+	if type(params) == "string" then
+		return params
+	elseif type(params) == "table" then
+		local param_pairs = {}
+		for key, value in pairs(params) do
+			table.insert(param_pairs, string.format('"%s": "%s"', key, tostring(value)))
+		end
+		return "{" .. table.concat(param_pairs, ", ") .. "}"
+	else
+		error("Invalid params: expected a table or a JSON string")
+	end
 end
 
 return M
