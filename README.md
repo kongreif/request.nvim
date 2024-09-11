@@ -66,10 +66,10 @@ You can try out the [commands](https://github.com/kongreif/request.nvim/blob/mai
 ```
 
 ## Contributing
-### Cone the repo
+### Clone the repo
 ```bash
-git clone https://github.com/xyz/zipzod@latest
-cd zipzod
+git clone https://github.com/kongreif/request.nvim
+cd request.nvim
 ```
 ### Add it to your packages
 E.g.
