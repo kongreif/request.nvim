@@ -49,6 +49,7 @@ M.open_params_window = function()
 
 	M.buffer_params = vim.api.nvim_create_buf(false, true)
 	vim.bo[M.buffer_params].bufhidden = "wipe"
+	vim.bo[M.buffer_params].filetype = "json"
 
 	M.window_params = vim.api.nvim_open_win(M.buffer_params, true, {
 		relative = "editor",
