@@ -5,7 +5,7 @@ local remaps = require("request.remaps")
 local width = vim.o.columns
 local height = vim.o.lines
 local input_fields = {
-	url = { row = 4, start_col = 0 },
+	url = { row = 5, start_col = 0 },
 }
 
 M.toggle_request_method = function()
@@ -47,9 +47,9 @@ M.reset = function()
 end
 
 M.open_params_window = function()
-	local window_height = math.floor(height * 0.8)
+	local window_height = math.floor(height * 0.38)
 	local window_width = math.floor(width * 0.4)
-	local window_left_edge_row = math.floor((height - window_height) / 2)
+	local window_left_edge_row = math.floor((height - height * 0.8) / 2)
 	local window_top_edge_col = math.floor(width / 2)
 
 	M.buffer_params = vim.api.nvim_create_buf(false, true)
@@ -112,6 +112,36 @@ M.open_response_window = function()
 	remaps.set_ui_keymaps(M.buffer_response, input_fields)
 end
 
+M.open_auth_window = function()
+	local window_height = math.floor(height * 0.4)
+	local window_width = math.floor(width * 0.4)
+	local window_left_edge_row = math.floor(height / 2)
+	local window_top_edge_col = math.floor(width / 2)
+
+	M.buffer_auth = vim.api.nvim_create_buf(false, true)
+	vim.bo[M.buffer_auth].bufhidden = "wipe"
+	vim.bo[M.buffer_auth].filetype = "json"
+
+	M.window_auth = vim.api.nvim_open_win(M.buffer_auth, true, {
+		relative = "editor",
+		width = window_width,
+		height = window_height,
+		row = window_left_edge_row,
+		col = window_top_edge_col,
+		border = "single",
+		title = "Auth",
+	})
+
+	vim.wo[M.window_auth].number = false
+	vim.wo[M.window_auth].relativenumber = false
+	vim.wo[M.window_auth].signcolumn = "no"
+	vim.wo[M.window_auth].fillchars = "eob: "
+
+	vim.api.nvim_buf_set_lines(M.buffer_auth, 0, -1, false, { "" })
+
+	remaps.set_ui_keymaps(M.buffer_auth, input_fields)
+end
+
 M.open_request_view = function()
 	local window_height = math.floor(height * 0.38)
 	local window_width = math.floor(width * 0.4)
@@ -139,8 +169,9 @@ M.open_request_view = function()
 	M.request_method = "GET"
 	vim.api.nvim_buf_set_lines(M.buffer_ui, 0, -1, false, { "Perform request [CR] Reset [X]" })
 	vim.api.nvim_buf_set_lines(M.buffer_ui, 1, -1, false, { "Request Method: " .. M.request_method .. " [M]" })
-	vim.api.nvim_buf_set_lines(M.buffer_ui, 2, -1, false, { "URL [U]:" })
-	vim.api.nvim_buf_set_lines(M.buffer_ui, 3, -1, false, { "" })
+	vim.api.nvim_buf_set_lines(M.buffer_ui, 2, -1, false, { "Toggle authentication [A]" })
+	vim.api.nvim_buf_set_lines(M.buffer_ui, 3, -1, false, { "URL [U]:" })
+	vim.api.nvim_buf_set_lines(M.buffer_ui, 4, -1, false, { "" })
 
 	remaps.set_ui_keymaps(M.buffer_ui, input_fields)
 end
@@ -153,9 +184,8 @@ end
 M.quit = function()
 	vim.api.nvim_win_close(M.window_ui, true)
 	vim.api.nvim_win_close(M.window_response, true)
-	if M.window_params then
-		vim.api.nvim_win_close(M.window_params, true)
-	end
+	vim.api.nvim_win_close(M.window_params, false)
+	vim.api.nvim_win_close(M.window_auth, false)
 end
 
 return M

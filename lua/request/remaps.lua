@@ -47,6 +47,13 @@ M.set_ui_keymaps = function(buffer, input_fields)
 		':lua require("request.ui").activate_params_insert()<CR>',
 		{ noremap = true, silent = true }
 	)
+	vim.api.nvim_buf_set_keymap(
+		buffer,
+		"n",
+		"A",
+		':lua require("request.ui").open_auth_window()<CR>',
+		{ noremap = true, silent = true }
+	)
 end
 
 return M
