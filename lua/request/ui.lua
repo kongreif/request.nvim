@@ -29,6 +29,21 @@ M.toggle_request_method = function()
 	vim.api.nvim_buf_set_lines(M.buffer_ui, 1, 2, false, { "Request Method: " .. M.request_method .. " [M]" })
 end
 
+M.toggle_auth_method = function()
+	if M.auth_method == "" then
+		M.auth_method = "Bearer "
+		M.open_auth_window()
+	elseif M.auth_method == "Bearer " then
+		M.auth_method = ""
+		M.hide_auth_window()
+	else
+		M.auth_method = ""
+		M.hide_auth_window()
+	end
+
+	vim.api.nvim_buf_set_lines(M.buffer_ui, 2, 3, false, { "Auhtentication: " .. M.auth_method .. "[A]" })
+end
+
 M.activate_url_insert = function(row, start_col)
 	vim.api.nvim_win_set_cursor(M.window_ui, { row, start_col })
 	vim.cmd("startinsert")
@@ -63,7 +78,7 @@ M.open_params_window = function()
 		row = window_left_edge_row,
 		col = window_top_edge_col,
 		border = "single",
-		title = "Set params [P]",
+		title = "Params",
 	})
 
 	vim.wo[M.window_params].number = false
@@ -142,6 +157,12 @@ M.open_auth_window = function()
 	remaps.set_ui_keymaps(M.buffer_auth, input_fields)
 end
 
+M.hide_auth_window = function()
+	if M.window_auth then
+		vim.api.nvim_win_close(M.window_auth, false)
+	end
+end
+
 M.open_request_view = function()
 	local window_height = math.floor(height * 0.38)
 	local window_width = math.floor(width * 0.4)
@@ -167,9 +188,10 @@ M.open_request_view = function()
 	vim.wo[M.window_ui].fillchars = "eob: "
 
 	M.request_method = "GET"
+	M.auth_method = ""
 	vim.api.nvim_buf_set_lines(M.buffer_ui, 0, -1, false, { "Perform request [CR] Reset [X]" })
 	vim.api.nvim_buf_set_lines(M.buffer_ui, 1, -1, false, { "Request Method: " .. M.request_method .. " [M]" })
-	vim.api.nvim_buf_set_lines(M.buffer_ui, 2, -1, false, { "Toggle authentication [A]" })
+	vim.api.nvim_buf_set_lines(M.buffer_ui, 2, -1, false, { "Authentication: " .. M.auth_method .. "[A]" })
 	vim.api.nvim_buf_set_lines(M.buffer_ui, 3, -1, false, { "URL [U]:" })
 	vim.api.nvim_buf_set_lines(M.buffer_ui, 4, -1, false, { "" })
 

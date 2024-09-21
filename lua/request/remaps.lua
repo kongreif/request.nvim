@@ -51,7 +51,7 @@ M.set_ui_keymaps = function(buffer, input_fields)
 		buffer,
 		"n",
 		"A",
-		':lua require("request.ui").open_auth_window()<CR>',
+		':lua require("request.ui").toggle_auth_method()<CR>',
 		{ noremap = true, silent = true }
 	)
 end
