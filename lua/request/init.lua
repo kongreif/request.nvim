@@ -7,7 +7,7 @@ local ui = require("request.ui")
 --   print("Options:", opts)
 -- end
 
-vim.api.nvim_create_user_command("Request", ui.open_request_view, {})
+vim.api.nvim_create_user_command("Request", ui.open_ui, {})
 
 M.get = commands.get
 M.post = commands.post

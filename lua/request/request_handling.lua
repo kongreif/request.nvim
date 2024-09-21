@@ -31,7 +31,7 @@ M.handle_request = function()
 
 	local print_result = M._format_result(result)
 
-	vim.api.nvim_buf_set_lines(ui.buffer_ui, 6, -1, false, print_result)
+	vim.api.nvim_buf_set_lines(ui.buffer_response, 0, -1, false, print_result)
 end
 
 M._is_param_request_method = function(request_method)
