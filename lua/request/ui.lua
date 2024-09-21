@@ -184,8 +184,12 @@ end
 M.quit = function()
 	vim.api.nvim_win_close(M.window_ui, true)
 	vim.api.nvim_win_close(M.window_response, true)
-	vim.api.nvim_win_close(M.window_params, false)
-	vim.api.nvim_win_close(M.window_auth, false)
+	if M.window_params then
+		vim.api.nvim_win_close(M.window_params, false)
+	end
+	if M.window_auth then
+		vim.api.nvim_win_close(M.window_auth, false)
+	end
 end
 
 return M

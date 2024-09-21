@@ -1,43 +1,61 @@
 local M = {}
 
-M.get = function(url)
-	local command = "curl -s " .. url
+M.get = function(url, auth)
+	local command = "curl -s --oauth2-bearer " .. auth .. " " .. url
 	return M._handle_response(command)
 end
 
-M.post = function(url, params)
+M.post = function(url, params, auth)
 	local curl_params = M._handle_params(params)
 
-	local command = "curl -s -X POST -H 'Content-Type: application/json' --data '" .. curl_params .. "' " .. url
+	local command = "curl -s -X POST -H 'Content-Type: application/json' --data '"
+		.. curl_params
+		.. "' "
+		.. " "
+		.. auth
+		.. " "
+		.. url
 
 	return M._handle_response(command)
 end
 
-M.put = function(url, params)
+M.put = function(url, params, auth)
 	local curl_params = M._handle_params(params)
 
-	local command = "curl -s -X PUT -H 'Content-Type: application/json' --data '" .. curl_params .. "' " .. url
+	local command = "curl -s -X PUT -H 'Content-Type: application/json' --data '"
+		.. curl_params
+		.. "' "
+		.. " "
+		.. auth
+		.. " "
+		.. url
 
 	return M._handle_response(command)
 end
 
-M.patch = function(url, params)
+M.patch = function(url, params, auth)
 	local curl_params = M._handle_params(params)
 
-	local command = "curl -s -X PATCH -H 'Content-Type: application/json' --data '" .. curl_params .. "' " .. url
+	local command = "curl -s -X PATCH -H 'Content-Type: application/json' --data '"
+		.. curl_params
+		.. "' "
+		.. " "
+		.. auth
+		.. " "
+		.. url
 
 	return M._handle_response(command)
 end
 
-M.delete = function(url)
-	local command = "curl -s -X DELETE " .. url
+M.delete = function(url, auth)
+	local command = "curl -s -X DELETE " .. auth .. " " .. url
 	return M._handle_response(command)
 end
 
-M._handle_response = function(command)
+M._handle_response = function(command, auth)
 	local handle = io.popen(command)
 	if handle == nil then
-		error("Nil response for command: " .. command)
+		error("Nil response for command: " .. auth .. " " .. command)
 	end
 	local result = handle:read("*a")
 	handle:close()

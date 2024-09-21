@@ -8,15 +8,18 @@ local param_request_methods = { "POST", "PUT", "PATCH" }
 M.handle_request = function()
 	local url = M._get_url()
 	local params = ""
+	local auth = ""
 
 	if M._is_param_request_method(ui.request_method) then
 		params = M._get_param_string()
 	end
 
+	auth = M._get_auth()
+
 	local result
 
 	if ui.request_method == "GET" then
-		result = commands.get(url)
+		result = commands.get(url, auth)
 	elseif ui.request_method == "POST" then
 		result = commands.post(url, params)
 	elseif ui.request_method == "PUT" then
@@ -44,7 +47,7 @@ M._is_param_request_method = function(request_method)
 end
 
 M._get_url = function()
-	local url_lines = vim.api.nvim_buf_get_lines(ui.buffer_ui, 3, 4, false)
+	local url_lines = vim.api.nvim_buf_get_lines(ui.buffer_ui, 4, 5, false)
 	return url_lines[1]
 end
 
@@ -62,8 +65,13 @@ M._format_result = function(result)
 end
 
 M._get_param_string = function()
-	local post_params_lines = vim.api.nvim_buf_get_lines(ui.buffer_params, 0, -1, false)
-	return table.concat(post_params_lines, "\n")
+	local params_lines = vim.api.nvim_buf_get_lines(ui.buffer_params, 0, -1, false)
+	return table.concat(params_lines, "\n")
+end
+
+M._get_auth = function()
+	local auth_lines = vim.api.nvim_buf_get_lines(ui.buffer_auth, 0, -1, false)
+	return table.concat(auth_lines, "\n")
 end
 
 return M
