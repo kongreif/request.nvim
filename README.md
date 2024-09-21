@@ -24,7 +24,10 @@ Hitting `Enter` will perform the request and show the response.
 
 The params are expected in valid JSON.
 
-Supports GET, POST, PUT, PATCH, and DELETE requests.
+Supports GET, POST, PUT, PATCH, and DELETE requests.  
+
+### Auth
+Currently only supports authentication via bearer token.
 
 ### Commands
 You can try out the [commands](https://github.com/kongreif/request.nvim/blob/main/lua/request/commands.lua) in Neovim's command mode like this:
