@@ -7,6 +7,9 @@ local param_request_methods = { "POST", "PUT", "PATCH" }
 
 M.handle_request = function()
 	local url = M._get_url()
+	if url == "" or url == nil then
+		error("URL is empty. Please enter a valid URL before making a request.")
+	end
 	local params = ""
 	local auth = ""
 
@@ -70,8 +73,12 @@ M._get_param_string = function()
 end
 
 M._get_auth = function()
-	local auth_lines = vim.api.nvim_buf_get_lines(ui.buffer_auth, 0, -1, false)
-	return table.concat(auth_lines, "\n")
+	if ui.buffer_auth and vim.api.nvim_buf_is_valid(ui.buffer_auth) then
+		local auth_lines = vim.api.nvim_buf_get_lines(ui.buffer_auth, 0, -1, false)
+		return table.concat(auth_lines, "\n")
+	else
+		return ""
+	end
 end
 
 return M
