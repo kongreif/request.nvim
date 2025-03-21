@@ -31,7 +31,7 @@ M.set_ui_keymaps = function(buffer, input_fields)
 		"n",
 		"<CR>",
 		':lua require("request.request_handling").handle_request()<CR>',
-		{ noremap = true, silent = false }
+		{ noremap = true, silent = true }
 	)
 	vim.api.nvim_buf_set_keymap(
 		buffer,

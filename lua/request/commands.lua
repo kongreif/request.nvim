@@ -1,5 +1,21 @@
 local M = {}
 
+local function build_auth_flag(auth)
+	if not auth or auth == "" then
+		return ""
+	end
+
+	if auth.type == "bearer" then
+		return '-H "Authorization: Bearer ' .. auth.token .. '"'
+	elseif auth.type == "basic auth" then
+		return "-u " .. auth.username .. ":" .. auth.password
+	elseif auth.type == nil then
+		return ""
+	else
+		error("Unsupported auth type")
+	end
+end
+
 M._build_command = function(method, url, data, auth)
 	local cmd_parts = { "curl -s" }
 
@@ -12,12 +28,9 @@ M._build_command = function(method, url, data, auth)
 		table.insert(cmd_parts, "--data '" .. data .. "'")
 	end
 
-	if auth and auth ~= "" then
-		if method == "GET" then
-			table.insert(cmd_parts, "--oauth2-bearer " .. auth)
-		else
-			table.insert(cmd_parts, auth)
-		end
+	local auth_flag = build_auth_flag(auth)
+	if auth_flag ~= "" then
+		table.insert(cmd_parts, auth_flag)
 	end
 
 	table.insert(cmd_parts, url)

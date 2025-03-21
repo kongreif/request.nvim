@@ -27,7 +27,10 @@ The params are expected in valid JSON.
 Supports GET, POST, PUT, PATCH, and DELETE requests.  
 
 ### Auth
-Currently only supports authentication via bearer token.
+It supports 2 auth methods: Basic Auth & Bearer
+
+For Basic Auth please provide your username and password each inside the `''`.
+For Bearer token you can just paste your token (without prepending `Bearer `) in the auth window.
 
 ### Commands
 You can try out the [commands](https://github.com/kongreif/request.nvim/blob/main/lua/request/commands.lua) in Neovim's command mode like this:

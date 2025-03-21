@@ -31,8 +31,12 @@ end
 
 M.toggle_auth_method = function()
 	if M.auth_method == "" then
-		M.auth_method = "Bearer "
+		M.auth_method = "Basic Auth "
 		M.open_auth_window()
+		M.set_open_auth()
+	elseif M.auth_method == "Basic Auth " then
+		M.auth_method = "Bearer "
+		M.clear_auth_window()
 	elseif M.auth_method == "Bearer " then
 		M.auth_method = ""
 		M.hide_auth_window()
@@ -155,6 +159,14 @@ M.open_auth_window = function()
 	vim.api.nvim_buf_set_lines(M.buffer_auth, 0, -1, false, { "" })
 
 	remaps.set_ui_keymaps(M.buffer_auth, input_fields)
+end
+
+M.set_open_auth = function()
+	vim.api.nvim_buf_set_lines(M.buffer_auth, 0, 2, false, { "Username: ''", "Password: ''" })
+end
+
+M.clear_auth_window = function()
+	vim.api.nvim_buf_set_lines(M.buffer_auth, 0, 2, false, { "", "" })
 end
 
 M.hide_auth_window = function()
