@@ -26,30 +26,30 @@ M.toggle_request_method = function()
 		M.hide_params_window()
 	end
 
-	vim.api.nvim_buf_set_lines(M.buffer_ui, 1, 2, false, { "Request Method: " .. M.request_method .. " [M]" })
+	vim.api.nvim_buf_set_lines(M.buffer_request, 1, 2, false, { "Request Method: " .. M.request_method .. " [M]" })
 end
 
 M.toggle_auth_method = function()
 	if M.auth_method == "" then
 		M.auth_method = "Basic Auth "
 		M.open_auth_window()
-		M.set_open_auth()
+		M.set_basic_auth()
 	elseif M.auth_method == "Basic Auth " then
 		M.auth_method = "Bearer "
 		M.clear_auth_window()
 	elseif M.auth_method == "Bearer " then
 		M.auth_method = ""
-		M.hide_auth_window()
+		M.close_auth_window()
 	else
 		M.auth_method = ""
-		M.hide_auth_window()
+		M.close_auth_window()
 	end
 
-	vim.api.nvim_buf_set_lines(M.buffer_ui, 2, 3, false, { "Auhtentication: " .. M.auth_method .. "[A]" })
+	vim.api.nvim_buf_set_lines(M.buffer_request, 2, 3, false, { "Auhtentication: " .. M.auth_method .. "[A]" })
 end
 
 M.activate_url_insert = function(row, start_col)
-	vim.api.nvim_win_set_cursor(M.window_ui, { row, start_col })
+	vim.api.nvim_win_set_cursor(M.window_request, { row, start_col })
 	vim.cmd("startinsert")
 end
 
@@ -61,8 +61,8 @@ M.activate_params_insert = function()
 end
 
 M.reset = function()
-	vim.api.nvim_buf_set_lines(M.buffer_ui, 3, 4, false, { "" })
-	vim.api.nvim_buf_set_lines(M.buffer_ui, 6, -1, false, { "" })
+	vim.api.nvim_buf_set_lines(M.buffer_request, 3, 4, false, { "" })
+	vim.api.nvim_buf_set_lines(M.buffer_request, 6, -1, false, { "" })
 end
 
 M.open_params_window = function()
@@ -71,8 +71,11 @@ M.open_params_window = function()
 	local window_left_edge_row = math.floor((height - height * 0.8) / 2)
 	local window_top_edge_col = math.floor(width / 2)
 
-	M.buffer_params = vim.api.nvim_create_buf(false, true)
-	vim.bo[M.buffer_params].bufhidden = "wipe"
+	if M.buffer_params == nil then
+		M.buffer_params = vim.api.nvim_create_buf(false, true)
+	end
+
+	vim.bo[M.buffer_params].bufhidden = "hide"
 	vim.bo[M.buffer_params].filetype = "json"
 
 	M.window_params = vim.api.nvim_open_win(M.buffer_params, true, {
@@ -90,14 +93,12 @@ M.open_params_window = function()
 	vim.wo[M.window_params].signcolumn = "no"
 	vim.wo[M.window_params].fillchars = "eob: "
 
-	vim.api.nvim_buf_set_lines(M.buffer_params, 0, -1, false, { "" })
-
 	remaps.set_ui_keymaps(M.buffer_params, input_fields)
 end
 
 M.hide_params_window = function()
 	if M.window_params then
-		vim.api.nvim_win_close(M.window_params, false)
+		vim.api.nvim_win_hide(M.window_params)
 	end
 end
 
@@ -107,7 +108,9 @@ M.open_response_window = function()
 	local window_left_edge_row = math.floor(height / 2)
 	local window_top_edge_col = math.floor((width - (width * 0.8)) / 2)
 
-	M.buffer_response = vim.api.nvim_create_buf(false, true)
+	if M.buffer_response == nil then
+		M.buffer_response = vim.api.nvim_create_buf(false, true)
+	end
 	vim.bo[M.buffer_response].bufhidden = "wipe"
 	vim.bo[M.buffer_response].filetype = "json"
 
@@ -137,7 +140,9 @@ M.open_auth_window = function()
 	local window_left_edge_row = math.floor(height / 2)
 	local window_top_edge_col = math.floor(width / 2)
 
-	M.buffer_auth = vim.api.nvim_create_buf(false, true)
+	if M.buffer_auth == nil then
+		M.buffer_auth = vim.api.nvim_create_buf(false, true)
+	end
 	vim.bo[M.buffer_auth].bufhidden = "wipe"
 	vim.bo[M.buffer_auth].filetype = "json"
 
@@ -161,7 +166,7 @@ M.open_auth_window = function()
 	remaps.set_ui_keymaps(M.buffer_auth, input_fields)
 end
 
-M.set_open_auth = function()
+M.set_basic_auth = function()
 	vim.api.nvim_buf_set_lines(M.buffer_auth, 0, 2, false, { "Username: ''", "Password: ''" })
 end
 
@@ -169,7 +174,7 @@ M.clear_auth_window = function()
 	vim.api.nvim_buf_set_lines(M.buffer_auth, 0, 2, false, { "", "" })
 end
 
-M.hide_auth_window = function()
+M.close_auth_window = function()
 	if M.window_auth then
 		vim.api.nvim_win_close(M.window_auth, false)
 	end
@@ -181,10 +186,10 @@ M.open_request_view = function()
 	local window_left_edge_row = math.floor((height - height * 0.8) / 2)
 	local window_top_edge_col = math.floor((width - (width * 0.8)) / 2)
 
-	M.buffer_ui = vim.api.nvim_create_buf(false, true)
-	vim.bo[M.buffer_ui].bufhidden = "wipe"
+	M.buffer_request = vim.api.nvim_create_buf(false, true)
+	vim.bo[M.buffer_request].bufhidden = "wipe"
 
-	M.window_ui = vim.api.nvim_open_win(M.buffer_ui, true, {
+	M.window_request = vim.api.nvim_open_win(M.buffer_request, true, {
 		relative = "editor",
 		width = window_width,
 		height = window_height,
@@ -194,20 +199,20 @@ M.open_request_view = function()
 		title = "request.nvim [Q]",
 	})
 
-	vim.wo[M.window_ui].number = false
-	vim.wo[M.window_ui].relativenumber = false
-	vim.wo[M.window_ui].signcolumn = "no"
-	vim.wo[M.window_ui].fillchars = "eob: "
+	vim.wo[M.window_request].number = false
+	vim.wo[M.window_request].relativenumber = false
+	vim.wo[M.window_request].signcolumn = "no"
+	vim.wo[M.window_request].fillchars = "eob: "
 
 	M.request_method = "GET"
 	M.auth_method = ""
-	vim.api.nvim_buf_set_lines(M.buffer_ui, 0, -1, false, { "Perform request [CR] Reset [X]" })
-	vim.api.nvim_buf_set_lines(M.buffer_ui, 1, -1, false, { "Request Method: " .. M.request_method .. " [M]" })
-	vim.api.nvim_buf_set_lines(M.buffer_ui, 2, -1, false, { "Authentication: " .. M.auth_method .. "[A]" })
-	vim.api.nvim_buf_set_lines(M.buffer_ui, 3, -1, false, { "URL [U]:" })
-	vim.api.nvim_buf_set_lines(M.buffer_ui, 4, -1, false, { "" })
+	vim.api.nvim_buf_set_lines(M.buffer_request, 0, -1, false, { "Perform request [CR] Reset [X]" })
+	vim.api.nvim_buf_set_lines(M.buffer_request, 1, -1, false, { "Request Method: " .. M.request_method .. " [M]" })
+	vim.api.nvim_buf_set_lines(M.buffer_request, 2, -1, false, { "Authentication: " .. M.auth_method .. "[A]" })
+	vim.api.nvim_buf_set_lines(M.buffer_request, 3, -1, false, { "URL [U]:" })
+	vim.api.nvim_buf_set_lines(M.buffer_request, 4, -1, false, { "" })
 
-	remaps.set_ui_keymaps(M.buffer_ui, input_fields)
+	remaps.set_ui_keymaps(M.buffer_request, input_fields)
 end
 
 M.open_ui = function()
@@ -216,13 +221,13 @@ M.open_ui = function()
 end
 
 M.quit = function()
-	vim.api.nvim_win_close(M.window_ui, true)
+	vim.api.nvim_win_close(M.window_request, true)
 	vim.api.nvim_win_close(M.window_response, true)
 	if M.window_params then
-		vim.api.nvim_win_close(M.window_params, false)
+		vim.api.nvim_win_close(M.window_params, true)
 	end
 	if M.window_auth then
-		vim.api.nvim_win_close(M.window_auth, false)
+		vim.api.nvim_win_close(M.window_auth, true)
 	end
 end
 
