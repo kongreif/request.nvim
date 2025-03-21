@@ -71,7 +71,7 @@ local get_param_string = function()
 	return table.concat(params_lines, "\n")
 end
 
-M.handle_request = function()
+M.perform_request = function()
 	local url = get_url()
 	if url == "" or url == nil then
 		error("URL is empty. Please enter a valid URL before making a request.")
