@@ -49,7 +49,7 @@ local is_param_request_method = function(request_method)
 end
 
 local get_url = function()
-	local url_lines = vim.api.nvim_buf_get_lines(ui.buffer_ui, 4, 5, false)
+	local url_lines = vim.api.nvim_buf_get_lines(ui.buffer_request, 4, 5, false)
 	return url_lines[1]
 end
 
