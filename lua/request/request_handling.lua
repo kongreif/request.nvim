@@ -30,8 +30,8 @@ local parse_auth = function(auth_str)
 end
 
 local get_auth = function()
-	if ui.buffer_auth and vim.api.nvim_buf_is_valid(ui.buffer_auth) then
-		local auth_lines = vim.api.nvim_buf_get_lines(ui.buffer_auth, 0, -1, false)
+	if ui.auth.buffer and vim.api.nvim_buf_is_valid(ui.auth.buffer) then
+		local auth_lines = vim.api.nvim_buf_get_lines(ui.auth.buffer, 0, -1, false)
 		local auth_str = table.concat(auth_lines, "\n")
 		return parse_auth(auth_str)
 	else
@@ -49,7 +49,7 @@ local is_param_request_method = function(request_method)
 end
 
 local get_url = function()
-	local url_lines = vim.api.nvim_buf_get_lines(ui.buffer_request, 4, 5, false)
+	local url_lines = vim.api.nvim_buf_get_lines(ui.request.buffer, 4, 5, false)
 	return url_lines[1]
 end
 
@@ -67,7 +67,7 @@ local format_result = function(result)
 end
 
 local get_param_string = function()
-	local params_lines = vim.api.nvim_buf_get_lines(ui.buffer_params, 0, -1, false)
+	local params_lines = vim.api.nvim_buf_get_lines(ui.params.buffer, 0, -1, false)
 	return table.concat(params_lines, "\n")
 end
 
@@ -79,7 +79,7 @@ M.perform_request = function()
 	local params = ""
 	local auth = {}
 
-	if is_param_request_method(ui.request_method) then
+	if is_param_request_method(ui.state.request_method) then
 		params = get_param_string()
 	end
 
@@ -87,23 +87,23 @@ M.perform_request = function()
 
 	local result
 
-	if ui.request_method == "GET" then
+	if ui.state.request_method == "GET" then
 		result = commands.get(url, auth)
-	elseif ui.request_method == "POST" then
+	elseif ui.state.request_method == "POST" then
 		result = commands.post(url, params)
-	elseif ui.request_method == "PUT" then
+	elseif ui.state.request_method == "PUT" then
 		result = commands.put(url, params)
-	elseif ui.request_method == "PATCH" then
+	elseif ui.state.request_method == "PATCH" then
 		result = commands.patch(url, params)
-	elseif ui.request_method == "DELETE" then
+	elseif ui.state.request_method == "DELETE" then
 		result = commands.delete(url)
 	else
-		error("Invalid request method:" .. ui.request_method)
+		error("Invalid request method:" .. ui.state.request_method)
 	end
 
 	local print_result = format_result(result)
 
-	vim.api.nvim_buf_set_lines(ui.buffer_response, 0, -1, false, print_result)
+	vim.api.nvim_buf_set_lines(ui.response.buffer, 0, -1, false, print_result)
 end
 
 return M

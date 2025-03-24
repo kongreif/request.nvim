@@ -6,7 +6,7 @@ M.set_ui_keymaps = function(buffer, input_fields)
 		buffer,
 		"n",
 		"M",
-		':lua require("request.ui").toggle_request_method()<CR>',
+		':lua require("request.ui.request").toggle_request_method()<CR>',
 		{ noremap = true, silent = true }
 	)
 
@@ -15,7 +15,7 @@ M.set_ui_keymaps = function(buffer, input_fields)
 		buffer,
 		"n",
 		"Q",
-		':lua require("request.ui").quit()<CR>',
+		':lua require("request.ui.init").quit()<CR>',
 		{ noremap = true, silent = true }
 	)
 
@@ -24,7 +24,7 @@ M.set_ui_keymaps = function(buffer, input_fields)
 		buffer,
 		"n",
 		"H",
-		':lua require("request.ui").hide()<CR>',
+		':lua require("request.ui.init").hide()<CR>',
 		{ noremap = true, silent = true }
 	)
 
@@ -34,7 +34,7 @@ M.set_ui_keymaps = function(buffer, input_fields)
 		"n",
 		"U",
 		string.format(
-			":lua require('request.ui').activate_url_insert(%s, %s)<CR>",
+			":lua require('request.ui.request').activate_url_insert(%s, %s)<CR>",
 			input_fields.url.row,
 			input_fields.url.start_col
 		),
@@ -55,7 +55,7 @@ M.set_ui_keymaps = function(buffer, input_fields)
 		buffer,
 		"n",
 		"X",
-		':lua require("request.ui").reset()<CR>',
+		':lua require("request.ui.init").reset()<CR>',
 		{ noremap = true, silent = true }
 	)
 
@@ -64,7 +64,7 @@ M.set_ui_keymaps = function(buffer, input_fields)
 		buffer,
 		"n",
 		"P",
-		':lua require("request.ui").focus_params()<CR>',
+		':lua require("request.ui.params").focus_params()<CR>',
 		{ noremap = true, silent = true }
 	)
 
@@ -73,7 +73,7 @@ M.set_ui_keymaps = function(buffer, input_fields)
 		buffer,
 		"n",
 		"F",
-		':lua require("request.ui").focus_auth()<CR>',
+		':lua require("request.ui.auth").focus_auth()<CR>',
 		{ noremap = true, silent = true }
 	)
 
@@ -82,7 +82,7 @@ M.set_ui_keymaps = function(buffer, input_fields)
 		buffer,
 		"n",
 		"A",
-		':lua require("request.ui").toggle_auth_method()<CR>',
+		':lua require("request.ui.request").toggle_auth_method()<CR>',
 		{ noremap = true, silent = true }
 	)
 end
