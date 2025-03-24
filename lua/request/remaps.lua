@@ -59,12 +59,21 @@ M.set_ui_keymaps = function(buffer, input_fields)
 		{ noremap = true, silent = true }
 	)
 
-	-- activate params insert
+	-- focus params
 	vim.api.nvim_buf_set_keymap(
 		buffer,
 		"n",
 		"P",
-		':lua require("request.ui").activate_params_insert()<CR>',
+		':lua require("request.ui").focus_params()<CR>',
+		{ noremap = true, silent = true }
+	)
+
+	-- focus auth
+	vim.api.nvim_buf_set_keymap(
+		buffer,
+		"n",
+		"F",
+		':lua require("request.ui").focus_auth()<CR>',
 		{ noremap = true, silent = true }
 	)
 

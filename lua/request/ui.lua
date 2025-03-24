@@ -66,8 +66,11 @@ M.toggle_auth_method = function()
 end
 
 M.activate_url_insert = function(row, start_col)
-	vim.api.nvim_win_set_cursor(M.window_request, { row, start_col })
-	vim.cmd("startinsert")
+	if M.window_request and vim.api.nvim_win_is_valid(M.window_request) then
+		vim.api.nvim_set_current_win(M.window_request)
+		vim.api.nvim_win_set_cursor(M.window_request, { row, start_col })
+		vim.cmd("startinsert")
+	end
 end
 
 M.activate_params_insert = function()
@@ -99,7 +102,7 @@ M.open_params_window = function()
 		row = window_left_edge_row,
 		col = window_top_edge_col,
 		border = "single",
-		title = "Params",
+		title = "Params [P]",
 	})
 
 	vim.wo[M.window_params].number = false
@@ -171,7 +174,7 @@ M.open_auth_window = function()
 		row = window_left_edge_row,
 		col = window_top_edge_col,
 		border = "single",
-		title = "Auth",
+		title = "Auth [F]",
 	})
 
 	vim.wo[M.window_auth].number = false
@@ -224,6 +227,20 @@ M.open_request_window = function()
 	vim.wo[M.window_request].relativenumber = false
 	vim.wo[M.window_request].signcolumn = "no"
 	vim.wo[M.window_request].fillchars = "eob: "
+end
+
+M.focus_params = function()
+	if M.window_params and vim.api.nvim_win_is_valid(M.window_params) then
+		vim.api.nvim_set_current_win(M.window_params)
+		vim.api.nvim_win_set_cursor(M.window_params, { 1, 0 })
+	end
+end
+
+M.focus_auth = function()
+	if M.window_auth and vim.api.nvim_win_is_valid(M.window_auth) then
+		vim.api.nvim_set_current_win(M.window_auth)
+		vim.api.nvim_win_set_cursor(M.window_auth, { 1, 0 })
+	end
 end
 
 M.open_ui = function()
