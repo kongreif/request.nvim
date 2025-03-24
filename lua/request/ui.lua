@@ -12,6 +12,19 @@ M.request_method = "GET"
 M.auth_method = ""
 M.param_methods = { "POST", "PUT", "PATCH" }
 
+M.update_request_window = function()
+	if M.buffer_request and vim.api.nvim_buf_is_valid(M.buffer_request) then
+		local lines = {
+			"Perform request [CR] Reset [X]",
+			"Request Method: " .. M.request_method .. " [M]",
+			"Authentication: " .. M.auth_method .. "[A]",
+			"URL [U]:",
+			"",
+		}
+		vim.api.nvim_buf_set_lines(M.buffer_request, 0, -1, false, lines)
+	end
+end
+
 M.toggle_request_method = function()
 	if M.request_method == "GET" then
 		M.request_method = "POST"
@@ -30,7 +43,7 @@ M.toggle_request_method = function()
 		M.hide_params_window()
 	end
 
-	vim.api.nvim_buf_set_lines(M.buffer_request, 1, 2, false, { "Request Method: " .. M.request_method .. " [M]" })
+	M.update_request_window()
 end
 
 M.toggle_auth_method = function()
@@ -49,7 +62,7 @@ M.toggle_auth_method = function()
 		M.close_auth_window()
 	end
 
-	vim.api.nvim_buf_set_lines(M.buffer_request, 2, 3, false, { "Auhtentication: " .. M.auth_method .. "[A]" })
+	M.update_request_window()
 end
 
 M.activate_url_insert = function(row, start_col)
@@ -62,11 +75,6 @@ M.activate_params_insert = function()
 		vim.api.nvim_win_set_cursor(0, { 1, 0 })
 		vim.cmd("startinsert")
 	end
-end
-
-M.reset = function()
-	vim.api.nvim_buf_set_lines(M.buffer_request, 3, 4, false, { "" })
-	vim.api.nvim_buf_set_lines(M.buffer_request, 6, -1, false, { "" })
 end
 
 M.open_params_window = function()
@@ -199,11 +207,7 @@ M.open_request_window = function()
 
 		remaps.set_ui_keymaps(M.buffer_request, input_fields)
 
-		vim.api.nvim_buf_set_lines(M.buffer_request, 0, -1, false, { "Perform request [CR] Reset [X]" })
-		vim.api.nvim_buf_set_lines(M.buffer_request, 1, -1, false, { "Request Method: " .. M.request_method .. " [M]" })
-		vim.api.nvim_buf_set_lines(M.buffer_request, 2, -1, false, { "Authentication: " .. M.auth_method .. "[A]" })
-		vim.api.nvim_buf_set_lines(M.buffer_request, 3, -1, false, { "URL [U]:" })
-		vim.api.nvim_buf_set_lines(M.buffer_request, 4, -1, false, { "" })
+		M.update_request_window()
 	end
 
 	M.window_request = vim.api.nvim_open_win(M.buffer_request, true, {
@@ -281,6 +285,25 @@ M.quit = function()
 
 	M.request_method = "GET"
 	M.auth_method = ""
+end
+
+M.reset = function()
+	M.request_method = "GET"
+	M.auth_method = ""
+	if M.buffer_params and vim.api.nvim_buf_is_valid(M.buffer_params) then
+		vim.api.nvim_buf_delete(M.buffer_params, { force = true })
+		M.buffer_params = nil
+	end
+	if M.buffer_auth and vim.api.nvim_buf_is_valid(M.buffer_auth) then
+		vim.api.nvim_buf_delete(M.buffer_auth, { force = true })
+		M.buffer_auth = nil
+	end
+
+	M.update_request_window()
+
+	if M.window_request and vim.api.nvim_win_is_valid(M.window_request) then
+		vim.api.nvim_set_current_win(M.window_request)
+	end
 end
 
 return M
