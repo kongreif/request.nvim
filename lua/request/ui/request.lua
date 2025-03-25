@@ -14,14 +14,20 @@ local input_fields = {
 }
 
 M.update_request_window = function()
+	state.URL = vim.api.nvim_buf_get_lines(M.buffer, 4, -1, false)
+
 	if M.buffer and vim.api.nvim_buf_is_valid(M.buffer) then
 		local lines = {
 			"Perform request [CR] Reset [X]",
 			"Request Method: " .. state.request_method .. " [M]",
 			"Authentication: " .. state.auth_method .. "[A]",
 			"URL [U]:",
-			"",
 		}
+		if #state.URL > 0 then
+			vim.list_extend(lines, state.URL)
+		else
+			table.insert(lines, "")
+		end
 		vim.api.nvim_buf_set_lines(M.buffer, 0, -1, false, lines)
 	end
 end
