@@ -1,5 +1,4 @@
 # TODO
-- Persist URL when redrawing request buffer
 - Extend testing suite
 - Create log of past requests
 - Ability to load past requests

@@ -40,4 +40,8 @@ M.open_response_window = function()
 	vim.wo[M.win].fillchars = "eob: "
 end
 
+M.show_loading = function()
+	vim.api.nvim_buf_set_lines(M.buffer, 0, -1, false, { "Loading..." })
+end
+
 return M

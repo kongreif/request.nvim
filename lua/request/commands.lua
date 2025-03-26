@@ -1,51 +1,69 @@
 local M = {}
 
+local ui = require("request.ui")
+
 local function build_auth_flag(auth)
 	if not auth or auth == "" then
 		return ""
 	end
 
 	if auth.type == "bearer" then
-		return '-H "Authorization: Bearer ' .. auth.token .. '"'
+		return "Authorization: Bearer " .. auth.token
 	elseif auth.type == "basic auth" then
-		return "-u " .. auth.username .. ":" .. auth.password
-	elseif auth.type == nil then
-		return ""
-	else
-		error("Unsupported auth type")
+		return auth.username .. ":" .. auth.password
 	end
+
+	error("Unsupported auth type")
 end
 
 M._build_command = function(method, url, data, auth)
-	local cmd_parts = { "curl -s" }
+	local cmd_parts = { "curl", "-s" }
 
 	if method ~= "GET" then
-		table.insert(cmd_parts, "-X " .. method)
+		table.insert(cmd_parts, "-X")
+		table.insert(cmd_parts, method)
 	end
 
 	if data then
-		table.insert(cmd_parts, "-H 'Content-Type: application/json'")
-		table.insert(cmd_parts, "--data '" .. data .. "'")
+		table.insert(cmd_parts, "-H")
+		table.insert(cmd_parts, "Content-Type: application/json")
+		table.insert(cmd_parts, "--data")
+		table.insert(cmd_parts, data)
 	end
 
 	local auth_flag = build_auth_flag(auth)
 	if auth_flag ~= "" then
-		table.insert(cmd_parts, auth_flag)
+		if auth.type == "bearer" then
+			table.insert(cmd_parts, "-H")
+			table.insert(cmd_parts, auth_flag)
+		else
+			table.insert(cmd_parts, "-u")
+			table.insert(cmd_parts, auth_flag)
+		end
 	end
 
 	table.insert(cmd_parts, url)
 
-	return table.concat(cmd_parts, " ")
+	return cmd_parts
 end
 
-M._handle_response = function(command)
-	local handle = io.popen(command)
-	if handle == nil then
-		error("Nil response for command: " .. command)
-	end
-	local result = handle:read("*a")
-	handle:close()
-	return result
+M._handle_response = function(command, callback)
+	ui.response.show_loading()
+	vim.cmd("redraw")
+
+	vim.fn.jobstart(command, {
+		stdout_buffered = true,
+		on_stdout = function(_, data)
+			if data and data[1] ~= "" then
+				callback(data)
+			end
+		end,
+		on_stderr = function(_, err)
+			if err and err[1] ~= "" then
+				callback(err)
+			end
+		end,
+	})
 end
 
 M._handle_params = function(params)
@@ -62,32 +80,32 @@ M._handle_params = function(params)
 	end
 end
 
-M.get = function(url, auth)
+M.get = function(url, auth, callback)
 	local command = M._build_command("GET", url, nil, auth)
-	return M._handle_response(command)
+	M._handle_response(command, callback)
 end
 
-M.post = function(url, params, auth)
+M.post = function(url, params, auth, callback)
 	local curl_params = M._handle_params(params)
 	local command = M._build_command("POST", url, curl_params, auth)
-	return M._handle_response(command)
+	M._handle_response(command, callback)
 end
 
-M.put = function(url, params, auth)
+M.put = function(url, params, auth, callback)
 	local curl_params = M._handle_params(params)
 	local command = M._build_command("PUT", url, curl_params, auth)
-	return M._handle_response(command)
+	M._handle_response(command, callback)
 end
 
-M.patch = function(url, params, auth)
+M.patch = function(url, params, auth, callback)
 	local curl_params = M._handle_params(params)
 	local command = M._build_command("PATCH", url, curl_params, auth)
-	return M._handle_response(command)
+	M._handle_response(command, callback)
 end
 
-M.delete = function(url, auth)
+M.delete = function(url, auth, callback)
 	local command = M._build_command("DELETE", url, nil, auth)
-	return M._handle_response(command)
+	M._handle_response(command, callback)
 end
 
 return M

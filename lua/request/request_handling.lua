@@ -53,19 +53,6 @@ local get_url = function()
 	return url_lines[1]
 end
 
-local format_result = function(result)
-	local formatted_result = {}
-	if result == "" then
-		table.insert(formatted_result, "The response was empty")
-	else
-		for line in result:gmatch("[^\r\n]+") do
-			table.insert(formatted_result, line)
-		end
-	end
-
-	return formatted_result
-end
-
 local get_param_string = function()
 	local params_lines = vim.api.nvim_buf_get_lines(ui.params.buffer, 0, -1, false)
 	return table.concat(params_lines, "\n")
@@ -85,25 +72,23 @@ M.perform_request = function()
 
 	auth = get_auth()
 
-	local result
+	local callback = function(lines)
+		vim.api.nvim_buf_set_lines(ui.response.buffer, 0, -1, false, lines)
+	end
 
 	if ui.state.request_method == "GET" then
-		result = commands.get(url, auth)
+		commands.get(url, auth, callback)
 	elseif ui.state.request_method == "POST" then
-		result = commands.post(url, params)
+		commands.post(url, params, auth, callback)
 	elseif ui.state.request_method == "PUT" then
-		result = commands.put(url, params)
+		commands.put(url, params, auth, callback)
 	elseif ui.state.request_method == "PATCH" then
-		result = commands.patch(url, params)
+		commands.patch(url, params, auth, callback)
 	elseif ui.state.request_method == "DELETE" then
-		result = commands.delete(url)
+		commands.delete(url, auth, callback)
 	else
 		error("Invalid request method:" .. ui.state.request_method)
 	end
-
-	local print_result = format_result(result)
-
-	vim.api.nvim_buf_set_lines(ui.response.buffer, 0, -1, false, print_result)
 end
 
 return M
