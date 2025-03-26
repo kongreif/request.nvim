@@ -19,11 +19,11 @@ M.open_auth_window = function()
 
 		vim.bo[M.buffer].bufhidden = "wipe"
 		vim.bo[M.buffer].filetype = "json"
+
+		remaps.set_ui_keymaps(M.buffer, input_fields)
 	end
 
 	vim.api.nvim_buf_set_lines(M.buffer, 0, -1, false, { "" })
-
-	remaps.set_ui_keymaps(M.buffer, input_fields)
 
 	M.win = vim.api.nvim_open_win(M.buffer, true, {
 		relative = "editor",

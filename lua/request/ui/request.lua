@@ -77,7 +77,7 @@ M.toggle_request_method = function()
 
 	M.update_request_window()
 
-	if vim.tbl_contains(state.param_methods, state.request_method) then
+	if params.should_open() then
 		params.open_params_window()
 	else
 		params.hide_params_window()

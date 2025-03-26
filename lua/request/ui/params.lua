@@ -23,20 +23,22 @@ M.open_params_window = function()
 		remaps.set_ui_keymaps(M.buffer, input_fields)
 	end
 
-	M.win = vim.api.nvim_open_win(M.buffer, true, {
-		relative = "editor",
-		width = dimensions.width,
-		height = dimensions.height,
-		row = dimensions.row,
-		col = dimensions.col,
-		border = "single",
-		title = "Params [P]",
-	})
+	if not (M.win and vim.api.nvim_win_is_valid(M.win)) then
+		M.win = vim.api.nvim_open_win(M.buffer, true, {
+			relative = "editor",
+			width = dimensions.width,
+			height = dimensions.height,
+			row = dimensions.row,
+			col = dimensions.col,
+			border = "single",
+			title = "Params [P]",
+		})
 
-	vim.wo[M.win].number = false
-	vim.wo[M.win].relativenumber = false
-	vim.wo[M.win].signcolumn = "no"
-	vim.wo[M.win].fillchars = "eob: "
+		vim.wo[M.win].number = false
+		vim.wo[M.win].relativenumber = false
+		vim.wo[M.win].signcolumn = "no"
+		vim.wo[M.win].fillchars = "eob: "
+	end
 end
 
 M.should_open = function()
